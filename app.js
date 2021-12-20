@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -14,7 +15,14 @@ const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));    //to tell where our views are located
+// path.join will take care if our path has / or not --very useful
+
 // GLOBAL MIDDLEWARES
+// Serving static files
+app.use(express.static(path.join(__dirname, 'public')));    //public is default folder--to serve static files like any html or images
+
 // Set security HTTP headers -put in beginning
 app.use(helmet());  // helemt() will return the desired middleware function
 
@@ -61,9 +69,6 @@ app.use(
     })
 );
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`));     //public is default folder--to serve static files like any html or images
-
 // Test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
@@ -71,7 +76,13 @@ app.use((req, res, next) => {
     next();
 })
 
+//ROUTES
 //mounting routers  
+
+app.get('/', (req, res) => {
+    res.status(200).render('base');     //no need to specify .pug here and it will look in the foler specified as the views path at the top
+})
+
 app.use('/api/v1/tours', tourRouter);   //tourRouter is middleware to be applied for specific url
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
