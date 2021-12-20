@@ -1,1 +1,22 @@
-h1 The Park Camper
+doctype html
+html
+  head
+    //- these assets will be looked in public folder as we specified it in the views path in app.js
+    title Tourdo | #{tour}
+    link(rel='stylesheet' href='/css/style.css')    
+    link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
+
+  body
+    h1= tour
+    h2= user.toUpperCase()
+    //- h1 The Park Camper
+
+    //- unbuffered code -wont be added to output
+    - const x = 9;
+    
+    //- this is buffered code
+    h2=2*x    
+
+    p This is some text
+
+    //-  // just 2 slashes--this will be a html comment and not for this file

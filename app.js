@@ -21,6 +21,7 @@ app.set('views', path.join(__dirname, 'views'));    //to tell where our views ar
 
 // GLOBAL MIDDLEWARES
 // Serving static files
+// responsiible for looking of static assets in public
 app.use(express.static(path.join(__dirname, 'public')));    //public is default folder--to serve static files like any html or images
 
 // Set security HTTP headers -put in beginning
@@ -80,7 +81,10 @@ app.use((req, res, next) => {
 //mounting routers  
 
 app.get('/', (req, res) => {
-    res.status(200).render('base');     //no need to specify .pug here and it will look in the foler specified as the views path at the top
+    res.status(200).render('base', {
+        tour: 'The Forest Hiker',
+        user: 'jonas'
+    });     //no need to specify .pug here and it will look in the foler specified as the views path at the top
 })
 
 app.use('/api/v1/tours', tourRouter);   //tourRouter is middleware to be applied for specific url
