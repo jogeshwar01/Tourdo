@@ -2,21 +2,46 @@ doctype html
 html
   head
     //- these assets will be looked in public folder as we specified it in the views path in app.js
-    title Tourdo | #{tour}
-    link(rel='stylesheet' href='/css/style.css')    
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet' href='/css/style.css')
     link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,300i,700')
+    title Natours | #{title}
 
   body
-    h1= tour
-    h2= user.toUpperCase()
-    //- h1 The Park Camper
+    // HEADER
+    //- dot operator used to add classname like here header tag with classname header
+    //- single dot like .header_logo means a div tag with classname header_logo
+    header.header      
+      nav.nav.nav--tours
+        a.nav__el(href='/') All tours
+      .header__logo
+        img(src='/img/logo-white.png' alt='Natours logo')
+      nav.nav.nav--user
+          //- a.nav__el(href='/login') My bookings
+          //- a.nav__el(href='/login')
+          //-   img.nav__user-img(src=`/img/users/user-1.jpg` alt=`User Photo`)
+          //-   span Jonas
 
-    //- unbuffered code -wont be added to output
-    - const x = 9;
-    
-    //- this is buffered code
-    h2=2*x    
+          button.nav__el Log in 
+          button.nav__el.nav__el--cta Sign up
 
-    p This is some text
+    // CONTENT
+    section.overview 
+      h1= tour 
 
-    //-  // just 2 slashes--this will be a html comment and not for this file
+    // FOOTER
+    footer.footer 
+      .footer__logo
+        img(src='/img/logo-green.png' alt='Natour logo')
+      ul.footer__nav
+        li: a(href='#') About us
+        li: a(href='#') Download apps
+        li: a(href='#') Become a guide
+        li: a(href='#') Careers
+        li: a(href='#') Contact
+      p.footer__copyright &copy; by Jogeshwar Singh
+
+  //- unbuffered code -wont be added to output
+  //-  // just 2 slashes--this will be a html comment and not for this file
