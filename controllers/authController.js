@@ -135,6 +135,40 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 });
 
+// just checking if user if logged in or not  --for displaying logout/login buttons
+//--similar to protect just diff is that this one should be there even for non logged in ones
+// Only for rendered pages, no errors!
+exports.isLoggedIn = async (req, res, next) => {
+    if (req.cookies.jwt) {
+        try {
+            // 1) verify token
+            const decoded = await promisify(jwt.verify)(
+                req.cookies.jwt,
+                process.env.JWT_SECRET
+            );
+
+            // 2) Check if user still exists
+            const currentUser = await User.findById(decoded.id);
+            if (!currentUser) {
+                return next();
+            }
+
+            // 3) Check if user changed password after the token was issued
+            if (currentUser.changedPasswordAfter(decoded.iat)) {
+                return next();
+            }
+
+            // THERE IS A LOGGED IN USER
+            // our pug templates will get access to this res.locals.user and they can access directly using name 'user'
+            res.locals.user = currentUser;
+            return next();
+        } catch (err) {
+            return next();
+        }
+    }
+    next();
+};
+
 // as we need arbitrary no. of args to be passed in the function we create a
 // wrapper function that returns middleware function that we want to create
 exports.restrictTo = (...roles) => {
