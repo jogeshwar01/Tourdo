@@ -26,7 +26,9 @@ app.set('views', path.join(__dirname, 'views'));    //to tell where our views ar
 app.use(express.static(path.join(__dirname, 'public')));    //public is default folder--to serve static files like any html or images
 
 // Set security HTTP headers -put in beginning
-app.use(helmet());  // helemt() will return the desired middleware function
+app.use(helmet({
+    contentSecurityPolicy: false,   //need to do this as otherwise this wont allow mapbox to be loaded
+}));  // helemt() will return the desired middleware function
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {

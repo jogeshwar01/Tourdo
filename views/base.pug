@@ -2,12 +2,13 @@ doctype html
 html
   head
     //- these assets will be looked in public folder as we specified it in the views path in app.js
-    meta(charset='UTF-8')
-    meta(name='viewport' content='width=device-width, initial-scale=1.0')
-    link(rel='stylesheet' href='/css/style.css')
-    link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
-    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,300i,700')
-    title Natours | #{title}
+    block head
+      meta(charset='UTF-8')
+      meta(name='viewport' content='width=device-width, initial-scale=1.0')
+      link(rel='stylesheet' href='/css/style.css')
+      link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
+      link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,300i,700')
+      title Natours | #{title}
 
   body
     // HEADER
@@ -20,5 +21,8 @@ html
     // FOOTER
     include _footer
 
-  //- unbuffered code -wont be added to output
-  //-  // just 2 slashes--this will be a html comment and not for this file
+    script(src='/js/mapbox.js')
+    //-his needs to be at end of base.pug as DOM may not be already loaded if we put it before
+
+    //- unbuffered code -wont be added to output
+    //-  // just 2 slashes--this will be a html comment and not for this file

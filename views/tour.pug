@@ -1,6 +1,11 @@
 extends base
 include _reviewCard
 
+//- this content will be appended to the content already in block,by default this overwrites the content of the block if append option not specified
+block append head
+    script(src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js')
+    link(href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet')
+
 mixin overviewBox(label, text, icon)
     .overview-box__detail
         svg.overview-box__icon
@@ -64,7 +69,9 @@ block content
                 img.picture-box__img(src=`/img/tours/${img}`, alt=`The Park Camper Tour ${i + 1}`, class=`picture-box__img--${i + 1}`)
 
     section.section-map
-        #map
+        #map(data-locations=`${JSON.stringify(tour.locations)}`)
+        //- we expose our location data directly as html attribute here so that it can easily read by js on client side
+        //- this is better if we dont want to do ajax calls to our api in js to get our data
 
     section.section-reviews
         .reviews
