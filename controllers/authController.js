@@ -93,6 +93,8 @@ exports.protect = catchAsync(async (req, res, next) => {
         req.headers.authorization.startsWith('Bearer')
     ) {
         token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies.jwt) {   //as there wont be a bearer token inside our cookie but a normal token
+        token = req.cookies.jwt;
     }
 
     if (!token) {
