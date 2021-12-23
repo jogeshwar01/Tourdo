@@ -33,35 +33,66 @@ const handleJWTError = () =>
 const handleJWTExpiredError = () =>
     new AppError('Your token has expired! Please log in again.', 401);
 
-const sendErrorDev = (err, res) => {
-    res.status(err.statusCode).json({
-        status: err.status,
-        error: err,
-        message: err.message,
-        stack: err.stack
+const sendErrorDev = (err, req, res) => {
+    // A) API
+    if (req.originalUrl.startsWith('/api')) {
+        return res.status(err.statusCode).json({
+            status: err.status,
+            error: err,
+            message: err.message,
+            stack: err.stack
+        });
+    }
+
+    // B) RENDERED WEBSITE
+    console.error('ERROR 💥', err);
+    return res.status(err.statusCode).render('error', {
+        title: 'Something went wrong!',
+        msg: err.message
     });
 };
 
-const sendErrorProd = (err, res) => {
-    // Operational, trusted error: send message to client-only errors created by ourselves in App Error class are operational
-    //we also want to mark the mongoose errors and some more as operational so we do new Apperror for that in handle functions
-    if (err.isOperational) {
-        res.status(err.statusCode).json({
-            status: err.status,
-            message: err.message
-        });
-    }
-    // Programming or other unknown error: don't leak error details
-    else {
-        // 1) Log error
-        console.error('ERROR 💥', err);
+const sendErrorProd = (err, req, res) => {
+    // A) API
+    if (req.originalUrl.startsWith('/api')) {
+        //we also want to mark the mongoose errors and some more as operational so we do new Apperror for that in handle functions
+        // A) Operational, trusted error: send message to client
+        if (err.isOperational) {
+            return res.status(err.statusCode).json({
+                status: err.status,
+                message: err.message
+            });
+        }
+        // B) Programming or other unknown error: don't leak error details
+        else {
+            // 1) Log error
+            console.error('ERROR 💥', err);
 
-        // 2) Send generic message
-        res.status(500).json({
-            status: 'error',
-            message: 'Something went very wrong!'
+            // 2) Send generic message
+            return res.status(500).json({
+                status: 'error',
+                message: 'Something went very wrong!'
+            });
+        }
+    }
+
+    // B) RENDERED WEBSITE
+    // A) Operational, trusted error: send message to client
+    if (err.isOperational) {
+        console.log(err);
+        return res.status(err.statusCode).render('error', {
+            title: 'Something went wrong!',
+            msg: err.message
         });
     }
+    // B) Programming or other unknown error: don't leak error details
+    // 1) Log error
+    console.error('ERROR 💥', err);
+    // 2) Send generic message
+    return res.status(err.statusCode).render('error', {
+        title: 'Something went wrong!',
+        msg: 'Please try again later.'
+    });
 };
 
 //express in built error handling middleware 
@@ -71,7 +102,7 @@ module.exports = (err, req, res, next) => {
     err.status = err.status || 'error';     //for 500 status is error , for 404 it is fail
 
     if (process.env.NODE_ENV === 'development') {
-        sendErrorDev(err, res);
+        sendErrorDev(err, req, res);
     }
     //this is not working if we do process.env.NODE_ENV === 'production'
     //When we used set NODE_ENV=production && something in npm scripts then NODE_ENV=production becomes production + " " with one whitespace after it.
@@ -90,6 +121,6 @@ module.exports = (err, req, res, next) => {
         if (error.name === 'JsonWebTokenError') error = handleJWTError();
         if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
 
-        sendErrorProd(error, res);
+        sendErrorProd(error, req, res);
     }
 };
