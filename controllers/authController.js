@@ -82,6 +82,18 @@ exports.login = catchAsync(async (req, res, next) => {
     createSendToken(user, 200, res);
 });
 
+//as we have a httpOnly cookie in createSendToken so that cannot be modified/deleted by the browser in order to logout
+//hence we simply send a new cookie with the exact same name but without the token but without the token
+//hence when this is sent in the next request ,it will be logged out
+//also given small expiration time to this cookie to just delete it in a clever way
+exports.logout = (req, res) => {
+    res.cookie('jwt', 'loggedout', {
+        expires: new Date(Date.now() + 10 * 1000),  //10 seconds expiration time
+        httpOnly: true
+    });
+    res.status(200).json({ status: 'success' });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
     // 1) Getting token and check if it's there
     let token;  //need to declare it before as scope of variables inside if block wont be outside it
@@ -137,7 +149,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 // just checking if user if logged in or not  --for displaying logout/login buttons
 //--similar to protect just diff is that this one should be there even for non logged in ones
-// Only for rendered pages, no errors!
+// Only for rendered pages, no errors! --used try/catch and just go to next for error
+//hence we did not add catchAsync here so that there are no errors and no one goes to global error hangling middleware
 exports.isLoggedIn = async (req, res, next) => {
     if (req.cookies.jwt) {
         try {
