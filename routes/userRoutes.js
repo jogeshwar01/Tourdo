@@ -17,7 +17,10 @@ router.use(authController.protect);
 router.patch('/updateMyPassword', authController.updatePassword);
 router.get('/me', userController.getMe, userController.getUser);
 router.delete('/deleteMe', userController.deleteMe);
-router.patch('/updateMe', userController.updateMe);
+
+router.patch('/updateMe',
+    userController.uploadUserPhoto, userController.updateMe);
+//here 'photo' is the field in the form which will upload the image
 
 // Only admins can access the routes after this middleware
 router.use(authController.restrictTo('admin'));
