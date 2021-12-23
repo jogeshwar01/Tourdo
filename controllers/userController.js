@@ -44,10 +44,7 @@ exports.getMe = (req, res, next) => {
 };
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-    console.log(req.file);
-    console.log(req.body);
-
-    // we give user to only update email and name here 
+    // we give user to only update email and name here and photo also now 
     //so need to filter these fields out as like eg) a user may also specify role:admin etc which shouldnt be allowed
     // this is separated from update password as that is how it is done in most websites
 
@@ -62,6 +59,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     }
     // 2) Filtered out unwanted fields names that are not allowed to be updated
     const filteredBody = filterObj(req.body, 'name', 'email');
+    if (req.file) filteredBody.photo = req.file.filename;
 
     // 3) Update user document    //can use req.user as we will use protect before this to authenticate as only logged in user can change stuff
     // user.save() will give us an error as it needs other things also that needs to be specified ie. the required fields but we dont want that
