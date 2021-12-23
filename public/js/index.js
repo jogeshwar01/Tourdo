@@ -4,8 +4,9 @@ import { displayMap } from './mapbox';
 import { login, logout } from './login';
 
 const mapBox = document.getElementById('map');
-const loginForm = document.querySelector('.form');
+const loginForm = document.querySelector('.form--login');   //to avoid clash with the other forms,need different names
 const logOutBtn = document.querySelector('.nav__el--logout');
+const userDataForm = document.querySelector('.form-user-data');
 
 // DELEGATION
 if (mapBox) {

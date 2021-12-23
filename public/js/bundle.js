@@ -9228,8 +9228,10 @@ var _login = require("./login");
 
 //to make some new js features work on older browsers
 var mapBox = document.getElementById('map');
-var loginForm = document.querySelector('.form');
-var logOutBtn = document.querySelector('.nav__el--logout'); // DELEGATION
+var loginForm = document.querySelector('.form--login'); //to avoid clash with the other forms,need different names
+
+var logOutBtn = document.querySelector('.nav__el--logout');
+var userDataForm = document.querySelector('.form-user-data'); // DELEGATION
 
 if (mapBox) {
   var locations = JSON.parse(mapBox.dataset.locations);
@@ -9271,7 +9273,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64349" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53662" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
