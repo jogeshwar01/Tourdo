@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');    //used jwt instead of sessions to keep o
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-const sendEmail = require('./../utils/email');
+const Email = require('./../utils/email');
 
 const signToken = id => {
     // SECRET should be atleast 32 letters-preffered and EXPIRES_IN we have set to 90d ie 90 days
@@ -54,6 +54,10 @@ exports.signup = catchAsync(async (req, res, next) => {
         passwordChangedAt: req.body.passwordChangedAt,
         role: req.body.role
     });
+
+    const url = `${req.protocol}://${req.get('host')}/me`;
+    console.log(url);
+    await new Email(newUser, url).sendWelcome();
 
     createSendToken(newUser, 201, res);
 
@@ -221,11 +225,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
         // send token to email 
         // this may result into promise being rejected inside sendEmail
         // may need to change port number --we have these four choices -25 or 465 or 587 or 2525
-        await sendEmail({
-            email: user.email,
-            subject: 'Your password reset token (valid for 10 min)',
-            message
-        });
+        // await sendEmail({
+        //     email: user.email,
+        //     subject: 'Your password reset token (valid for 10 min)',
+        //     message
+        // });
 
         res.status(200).json({
             status: 'success',
