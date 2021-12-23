@@ -143,6 +143,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
     // GRANT ACCESS TO PROTECTED ROUTE
     req.user = currentUser;     //just putting entire user data on the request for future use
+    res.locals.user = currentUser;  //so that we can use it in all templates where login need like account template
     next();
 
 });
