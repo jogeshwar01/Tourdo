@@ -29,9 +29,16 @@ if (logOutBtn) logOutBtn.addEventListener('click', logout);
 if (userDataForm)
     userDataForm.addEventListener('submit', e => {
         e.preventDefault(); //to prevent submitting on click
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        updateSettings({ name, email }, 'data');
+
+        //need to do it like this as we want our photo to have enctype 'multipart/form-data' for this to work
+        const form = new FormData();
+        form.append('name', document.getElementById('name').value);
+        form.append('email', document.getElementById('email').value);
+        form.append('photo', document.getElementById('photo').files[0]); //files is an array but with only one thing
+        //console.log(form);    //not really useful to log this 
+        //can add reload after image is uploaded but that is way too much work for this small features
+
+        updateSettings(form, 'data');
     });
 
 if (userPasswordForm)

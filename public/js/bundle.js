@@ -8996,6 +8996,7 @@ var updateSettings = /*#__PURE__*/function () {
 
             if (res.data.status === 'success') {
               (0, _alerts.showAlert)('success', "".concat(type.toUpperCase(), " updated successfully!"));
+              location.reload(true); //to reload the page on save-- i added this extra
             }
 
             _context.next = 11;
@@ -9318,13 +9319,16 @@ if (loginForm) loginForm.addEventListener('submit', function (e) {
 if (logOutBtn) logOutBtn.addEventListener('click', _login.logout);
 if (userDataForm) userDataForm.addEventListener('submit', function (e) {
   e.preventDefault(); //to prevent submitting on click
+  //need to do it like this as we want our photo to have enctype 'multipart/form-data' for this to work
 
-  var name = document.getElementById('name').value;
-  var email = document.getElementById('email').value;
-  (0, _updateSettings.updateSettings)({
-    name: name,
-    email: email
-  }, 'data');
+  var form = new FormData();
+  form.append('name', document.getElementById('name').value);
+  form.append('email', document.getElementById('email').value);
+  form.append('photo', document.getElementById('photo').files[0]); //files is an array but with only one thing
+  //console.log(form);    //not really useful to log this 
+  //can add reload after image is uploaded but that is way too much work for this small features
+
+  (0, _updateSettings.updateSettings)(form, 'data');
 });
 if (userPasswordForm) userPasswordForm.addEventListener('submit', /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e) {
@@ -9394,7 +9398,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64052" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57866" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -19,6 +19,7 @@ export const updateSettings = async (data, type) => {
 
         if (res.data.status === 'success') {
             showAlert('success', `${type.toUpperCase()} updated successfully!`);
+            location.reload(true);  //to reload the page on save-- i added this extra
         }
     } catch (err) {
         showAlert('error', err.response.data.message);
