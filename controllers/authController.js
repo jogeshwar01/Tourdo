@@ -215,14 +215,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     // turn off validators password is required & also other field validations
 
     // 3) Send it to user's email
-    const resetURL = `${req.protocol}://${req.get(
-        'host'
-    )}/api/v1/users/resetPassword/${resetToken}`;
 
-    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}\nIf you didn't forget your password, please ignore this email!`;
+    // const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}\nIf you didn't forget your password, please ignore this email!`;
 
     try {
-        // send token to email 
+        // send token to email --older way
         // this may result into promise being rejected inside sendEmail
         // may need to change port number --we have these four choices -25 or 465 or 587 or 2525
         // await sendEmail({
@@ -230,6 +227,12 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
         //     subject: 'Your password reset token (valid for 10 min)',
         //     message
         // });
+
+        const resetURL = `${req.protocol}://${req.get(
+            'host'
+        )}/api/v1/users/resetPassword/${resetToken}`;
+
+        await new Email(user, resetURL).sendPasswordReset();
 
         res.status(200).json({
             status: 'success',
