@@ -32,10 +32,10 @@ block content
           
           //- WITHOUT API --this is a poorer way as it is difficult to handle errors and this also forces a page reload
           //- so like if we put a wrong password,its going to reload to error page directly
-          
+          //- form.form.form-user-data(action='/submit-user-data' method='POST')
+
           //- WITH API
-          //- form.form.form-user-data
-          form.form.form-user-data(action='/submit-user-data' method='POST')
+          form.form.form-user-data
             .form__group
               label.form__label(for='name') Name
               input#name.form__input(type='text', value=`${user.name}`, required, name='name')
