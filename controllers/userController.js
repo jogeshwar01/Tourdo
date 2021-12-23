@@ -1,18 +1,22 @@
-const User = require('./../models/userModel');
 const multer = require('multer');
+const sharp = require('sharp');
+const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
 
-const multerStorage = multer.diskStorage({
-    destination: (req, file, cb) => {   //cb(callback) in multer is similar to next in express
-        cb(null, 'public/img/users');
-    },
-    filename: (req, file, cb) => {
-        const ext = file.mimetype.split('/')[1];    //here file is the req.file object and we extract the field mimetype which is like image/jpeg
-        cb(null, `user-${req.user.id}-${Date.now()}.${ext}`); //unique file names for photos -->user-ID-currentTimeStamp
-    }
-});
+// const multerStorage = multer.diskStorage({
+//     destination: (req, file, cb) => {   //cb(callback) in multer is similar to next in express
+//         cb(null, 'public/img/users');
+//     },
+//     filename: (req, file, cb) => {
+//         const ext = file.mimetype.split('/')[1];    //here file is the req.file object and we extract the field mimetype which is like image/jpeg
+//         cb(null, `user-${req.user.id}-${Date.now()}.${ext}`); //unique file names for photos -->user-ID-currentTimeStamp
+//     }
+// });
+
+//save file to disk and not to memory as we have to resize it later and hence just store the image as a buffer
+const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
     //we only want image files to be uploaded
@@ -29,6 +33,23 @@ const upload = multer({
 });
 
 exports.uploadUserPhoto = upload.single('photo');
+
+//resizing images which are not of desired size
+//if there was a uploaded file,we will have it on req.file
+exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
+    if (!req.file) return next();
+
+    //we need this filename to be set here as we need it in our updateMe middleware
+    req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+    await sharp(req.file.buffer)    //image in memory--req.file.buffer
+        .resize(500, 500)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/users/${req.file.filename}`);   //write to a file on the disk
+
+    next();
+});
 
 const filterObj = (obj, ...allowedFields) => {      //...allowedFields --creates an array of all arguments passed in
     const newObj = {};

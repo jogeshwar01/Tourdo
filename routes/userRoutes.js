@@ -19,7 +19,9 @@ router.get('/me', userController.getMe, userController.getUser);
 router.delete('/deleteMe', userController.deleteMe);
 
 router.patch('/updateMe',
-    userController.uploadUserPhoto, userController.updateMe);
+    userController.uploadUserPhoto,
+    userController.resizeUserPhoto,
+    userController.updateMe);
 //here 'photo' is the field in the form which will upload the image
 
 // Only admins can access the routes after this middleware
