@@ -3,6 +3,7 @@ include _reviewCard
 
 //- this content will be appended to the content already in block,by default this overwrites the content of the block if append option not specified
 block append head
+    script(src='https://js.stripe.com/v3/')
     script(src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js')
     link(href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet')
 
@@ -87,4 +88,8 @@ block content
             .cta__content
                 h2.heading-secondary What are you waiting for?
                 p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
-                button.btn.btn--green.span-all-rows Book tour now!
+                if user
+                    //- need to put id here as we have our route /checkout-session/tourId so we need it somewhere
+                    button.btn.btn--green.span-all-rows#book-tour(data-tour-id=`${tour.id}`) Book tour now!
+                else
+                    a.btn.btn--green.span-all-rows(href='/login') Log in to book tour

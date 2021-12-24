@@ -3,12 +3,14 @@ import '@babel/polyfill';   //to make some new js features work on older browser
 import { displayMap } from './mapbox';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
+import { bookTour } from './stripe';
 
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');   //to avoid clash with the other forms,need different names
 const logOutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
+const bookBtn = document.getElementById('book-tour');
 
 // DELEGATION
 if (mapBox) {
@@ -62,4 +64,11 @@ if (userPasswordForm)
         document.getElementById('password-current').value = '';
         document.getElementById('password').value = '';
         document.getElementById('password-confirm').value = '';
+    });
+
+if (bookBtn)
+    bookBtn.addEventListener('click', e => {
+        e.target.textContent = 'Processing...';
+        const { tourId } = e.target.dataset;    //e will be the data on button that triggered this event
+        bookTour(tourId);   //we named it data-tour-id and it will be camelCased in e.target.dataset hence its name here is tourId
     });

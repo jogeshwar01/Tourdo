@@ -2,6 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 //installed version 7 of stripe so that code wont break --else we would need to do for latest version 8
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // 1) Get the currently booked tour
@@ -13,7 +14,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
         payment_method_types: ['card'],
         success_url: `${req.protocol}://${req.get('host')}/`,   //url to go for successful payment
         cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,    //url where user goes if they cancel the payment
-        customer_email: req.user.email, //as protect called before,so we have user on req.user
+        customer_email: req.user.email, //as protect called before,so we have user on req.user-- this prefills email in payment checkout page i guess
         client_reference_id: req.params.tourId, //allows us to pass data about the session we are creating--helpful later 
         //line_items -info about product to be purchased
         line_items: [
