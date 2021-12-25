@@ -19,6 +19,8 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
+app.enable('trust proxy');  //as heroku is also a proxy --this is built into express for these situations
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));    //to tell where our views are located
 // path.join will take care if our path has / or not --very useful

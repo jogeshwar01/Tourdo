@@ -13,21 +13,25 @@ const signToken = id => {
     });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
     const token = signToken(user._id);
-    const cookieOptions = {
+    // cookie will only be sent on encypted connection -HTTPS  --only in production as we cannot test it in developmennt
+    // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+    //not all production apps will be secure so we cant set directly to https
+    //this is very heroku specific--can put it directly
+    //cookieOptions.secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+
+    res.cookie('jwt', token, {
         // set JWT_COOKIE_EXPIRES_IN to 90 not 90d as we wanted to do maths on it
         expires: new Date(
             Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000        //convert 90 days to milliseconds
         ),
-        httpOnly: true  //cookie cannot be modified or accessed by browser 
+        httpOnly: true,  //cookie cannot be modified or accessed by browser 
         //-so browser can only receive,store and send back the cookie in every future request
-    };
 
-    // cookie will only be sent on encypted connection -HTTPS  --only in production as we cannot test it in developmennt
-    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-
-    res.cookie('jwt', token, cookieOptions);
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+    });
 
     // Remove password from output
     user.password = undefined;
@@ -59,7 +63,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     //console.log(url);
     await new Email(newUser, url).sendWelcome();
 
-    createSendToken(newUser, 201, res);
+    createSendToken(newUser, 201, req, res);
 
 });
 
@@ -83,7 +87,7 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     // 3) If everything ok, send token to client
-    createSendToken(user, 200, res);
+    createSendToken(user, 200, req, res);
 });
 
 //as we have a httpOnly cookie in createSendToken so that cannot be modified/deleted by the browser in order to logout
@@ -251,7 +255,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     }
 });
 
-
 exports.resetPassword = catchAsync(async (req, res, next) => {
     // 1) Get user based on the token
     // as resetToken sent in url is non encrypted while in db we have encrypted one
@@ -279,7 +282,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
     // 3) Update changedPasswordAt property for the user
     // 4) Log the user in, send JWT
-    createSendToken(user, 200, res);
+    createSendToken(user, 200, req, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -301,5 +304,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     // 2) also the two pre 'save' middlewares wont work
 
     // 4) Log user in, send JWT
-    createSendToken(user, 200, res);
+    createSendToken(user, 200, req, res);
 });
