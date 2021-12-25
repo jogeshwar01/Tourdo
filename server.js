@@ -50,3 +50,12 @@ process.on('unhandledRejection', err => {
         process.exit(1);    //optional to crash our app
     });
 });
+
+//sigterm is a signal that makes a program to stop running--because heroku shuts down our app every 24 hours
+process.on('SIGTERM', () => {
+    console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+    //to prevent abrupt finishing of app
+    server.close(() => {
+        console.log('💥 Process terminated!');
+    });
+});
