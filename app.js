@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -19,6 +20,8 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
+//also changed json "engines": {"node": "^14"} as other one was giving problems
+
 app.enable('trust proxy');  //as heroku is also a proxy --this is built into express for these situations
 
 app.set('view engine', 'pug');
@@ -26,6 +29,18 @@ app.set('views', path.join(__dirname, 'views'));    //to tell where our views ar
 // path.join will take care if our path has / or not --very useful
 
 // GLOBAL MIDDLEWARES
+// Implement CORS
+app.use(cors());    //will only work for simple requests --get/post
+// sets 'Access-Control-Allow-Origin' header to *
+// api.natours.com, front-end natours.com
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+
+//to make it work for non simple requests --put/patch/delete/send cookies/using non standard headers
+app.options('*', cors());
+// app.options('/api/v1/tours/:id', cors());    //to allow non simple request for a specific url
+
 // Serving static files
 // responsiible for looking of static assets in public
 app.use(express.static(path.join(__dirname, 'public')));    //public is default folder--to serve static files like any html or images
