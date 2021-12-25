@@ -2,6 +2,4 @@
 
 ### we need to run 'npm run watch:js' everytime we make changes so that parcel can bundle it.
 
-### In stripe.js 
-const stripe = Stripe('pk_test_51JzfKQSAJ3mr6KzPp0ThmkfhgCtYBhJYZfyOHW49xhHEy9QRF2GxaEETpkCKx6YWTpqZZDTPKMOFMBm36FXCVyxF00H5GwRxdp');
-This is not letting the login functionality work --dont know why
+### bug fixed : need to keep script(src='https://js.stripe.com/v3/') in the main base.pug (parcel needs it here and not in tour.pug)
