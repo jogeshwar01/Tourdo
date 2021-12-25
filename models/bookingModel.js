@@ -31,7 +31,7 @@ bookingSchema.pre(/^find/, function (next) {
         path: 'tour',
         select: 'name'
     });
-    next();
+    next(); //very very important to call next in these middlewares
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
