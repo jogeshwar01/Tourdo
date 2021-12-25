@@ -6,7 +6,8 @@ const bookingController = require('../controllers/bookingController');
 const router = express.Router();
 
 //as we want /me to be protected but as isLoggedIn is kinda same so we need to do manually for all the ones which need it to avoid them at the same time
-router.get('/', bookingController.createBookingCheckout, authController.isLoggedIn, viewsController.getOverview);
+router.get('/', authController.isLoggedIn, viewsController.getOverview);
+//no need now of this createBookingCheckout here
 //need to add it here for now as we will redirect to this page on booking checkout --will be changed later
 
 router.get('/tour/:slug', authController.isLoggedIn, viewsController.getTour); //just added protect for testing login

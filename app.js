@@ -16,6 +16,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
@@ -64,6 +65,14 @@ const limiter = rateLimit({
 });
 // to see how many requests pending in postman check headers in output
 app.use('/api', limiter);   // limit our api routes
+
+// Stripe webhook, BEFORE body-parser, because stripe needs the body as stream
+// need body coming in request not in JSON but in raw format and hence put it before the body parser which is the next line
+app.post(
+    '/webhook-checkout',
+    express.raw({ type: 'application/json' }),  //can use npm package body-parser but no need as now express has it built in
+    bookingController.webhookCheckout
+);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));   //max amount of data that can come into body set to 10kb
