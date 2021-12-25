@@ -31,7 +31,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
             {
                 name: `${tour.name} Tour`,
                 description: tour.summary,
-                images: [`https://www.natours.dev/img/tours/${tour.imageCover}`],
+                images: [`${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}`],
                 //need real images on server --as stripe will upload them then so we need a deployed website so we choose these from the actual deployed web
                 amount: tour.price * 100,   //in cents
                 currency: 'usd',
@@ -63,7 +63,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 const createBookingCheckout = async session => {
     const tour = session.client_reference_id;
     const user = (await User.findOne({ email: session.customer_email })).id;
-    const price = session.line_items[0].amount / 100;
+    const price = session.amount_total;  //saw this in the session created in stripe
 
     await Booking.create({ tour, user, price });
 };
