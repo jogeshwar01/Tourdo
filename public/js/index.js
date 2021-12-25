@@ -4,6 +4,7 @@ import { displayMap } from './mapbox';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
+import { showAlert } from './alerts';
 
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');   //to avoid clash with the other forms,need different names
@@ -72,3 +73,6 @@ if (bookBtn)
         const { tourId } = e.target.dataset;    //e will be the data on button that triggered this event
         bookTour(tourId);   //we named it data-tour-id and it will be camelCased in e.target.dataset hence its name here is tourId
     });
+
+const alertMessage = document.querySelector('body').dataset.alert;
+if (alertMessage) showAlert('success', alertMessage, 20);

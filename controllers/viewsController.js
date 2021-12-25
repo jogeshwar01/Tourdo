@@ -4,6 +4,15 @@ const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
+exports.alerts = (req, res, next) => {
+    const { alert } = req.query;
+    if (alert === 'booking')
+        res.locals.alert =
+            "Your booking was successful! Please check your email for a confirmation. If your booking doesn't show up here immediatly, please come back later.";
+    //we wrote this as stripe has written in the docs that it may be possible that the webhook is called after success url is called so may take some time
+    next();
+};
+
 //no need to specify .pug here and it will look in the foler specified as the views path at the top
 exports.getOverview = catchAsync(async (req, res, next) => {
     // 1) Get tour data from collection

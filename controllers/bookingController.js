@@ -20,7 +20,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
         // success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourId
         //     }&user=${req.user.id}&price=${tour.price}`,   //url to go for successful payment
 
-        success_url: `${req.protocol}://${req.get('host')}/my-tours`,
+        success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`,
 
         cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,    //url where user goes if they cancel the payment
         customer_email: req.user.email, //as protect called before,so we have user on req.user-- this prefills email in payment checkout page i guess
